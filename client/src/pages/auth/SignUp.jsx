@@ -9,11 +9,9 @@ import Button from "../../components/Button";
 import { Link } from "react-router-dom";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { GoIssueClosed } from "react-icons/go";
-import PasswordStrengthMeter from "../../components/PasswordStrengthMeter";
 import PasswordStrengthChecker from "../../components/PasswordStrengthChecker";
 
 const SignUp = () => {
-
   const [passwordVisible, setPasswordVisible] = useState(false);
   const togglePasswordVisibility = () => {
     setPasswordVisible((prevState) => !prevState);
@@ -41,19 +39,16 @@ const SignUp = () => {
         .matches(
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&'^#])[A-Za-z\d@$!%*?&'^#]+$/,
           "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
-        )
-        ,
+        ),
       confirmPassword: Yup.string()
         .required("Confirm Password is required")
         .oneOf([Yup.ref("password"), null], "Passwords must match"),
-     
     }),
     onSubmit: (values) => {
       console.log("submit", values);
     },
   });
-  
-  console.log(formik.errors.password);
+
   return (
     <AuthLayout>
       <div className="w-full ">
@@ -130,18 +125,8 @@ const SignUp = () => {
             <label htmlFor="password" className="text-lg opacity-70">
               Password
             </label>
-            {/* <p>
-              {formik.touched.password && formik.errors.password ? (
-                <InputInfoComponent
-                  message={formik.errors.password}
-                  type="error"
-                />
-              ) : (
-                ""
-              )}
-            </p> */}
-           <PasswordStrengthChecker password={formik.values.password}/>
-            {/* <PasswordStrengthMeter password={formik.values.password} /> */}
+
+            <PasswordStrengthChecker password={formik.values.password} />
             <PassInput
               passwordVisible={passwordVisible}
               name="password"
