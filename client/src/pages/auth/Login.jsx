@@ -6,25 +6,51 @@ import Button from "../../components/Button";
 import { useState } from "react";
 import PassInput from "../../components/PassInput";
 import InputInfoComponent from "../../components/InputInfoComponent";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "./AuthLayout";
+import { useDispatch, useSelector } from "react-redux";
+import { signInFailure, signInStart, signInSuccess } from "../../redux/user/userSlice";
 const Login = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const togglePasswordVisibility = () => {
     setPasswordVisible((prevState) => !prevState);
   };
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const formik = useFormik({
     initialValues: {
       email: "",
+      password: "",
     },
     // validate form
     validationSchema: Yup.object({
       email: Yup.string()
         .email("Invalid Email Address")
         .required("Email is required"),
+      password: Yup.string().required("Password is required"),
     }),
-    onSubmit: (values) => {
-      console.log("submit", values);
+    onSubmit: async (values) => {
+      // console.log("submit", values);
+      console.log("Been clicked")
+      try {
+        dispatch(signInStart());
+        const res = await fetch("/api/auth/signin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        });
+        const data = await res.json();
+        if (data.success === false) {
+          dispatch(signInFailure(data));
+          return;
+        }
+        dispatch(signInSuccess(data));
+        navigate(`/${data.role}/dashboard`);
+      } catch (error) {
+        dispatch(signInFailure(error));
+      }
     },
   });
 

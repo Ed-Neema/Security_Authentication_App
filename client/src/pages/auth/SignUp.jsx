@@ -6,22 +6,35 @@ import InputInfoComponent from "../../components/InputInfoComponent";
 import AuthInput from "../../components/AuthInput";
 import PassInput from "../../components/PassInput";
 import Button from "../../components/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { GoIssueClosed } from "react-icons/go";
 import PasswordStrengthChecker from "../../components/PasswordStrengthChecker";
-
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signUpFailure,
+  signUpStart,
+  signUpSuccess,
+} from "../../redux/user/userSlice";
+// import {
+//   signUpStart,
+//   signUpSuccess,
+//   signUpFailure,
+// } from "../redux/user/userSlice";
 const SignUp = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const togglePasswordVisibility = () => {
     setPasswordVisible((prevState) => !prevState);
   };
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.user);
 
   const formik = useFormik({
     initialValues: {
       name: "",
       email: "",
-      role: "Student",
+      role: "student",
       password: "",
       confirmPassword: "",
     },
@@ -44,14 +57,44 @@ const SignUp = () => {
         .required("Confirm Password is required")
         .oneOf([Yup.ref("password"), null], "Passwords must match"),
     }),
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
+      // Convert the 'role' value to lowercase
+      values.role = values.role.toLowerCase();
+      console.log(values);
+      console.log("before request");
+      try {
+        console.log("inside try catch 1");
+        dispatch(signUpStart());
+        console.log("inside try catch b");
+        const res = await fetch("/api/auth/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        });
+        console.log("inside try catch 2");
+        const data = await res.json();
+        console.log("Data returned: ", data);
+        if (data.success === false) {
+          dispatch(signUpFailure(data));
+          return;
+        }
+        // dispatch(signUpSuccess(data));
+        navigate("/auth/login");
+      } catch (error) {
+        dispatch(signUpFailure(error));
+      }
       console.log("submit", values);
     },
   });
-
+// #Awesome10
   return (
     <AuthLayout>
       <div className="w-full ">
+        <p className="text-red-700 my-4">
+          {error ? error.message || "Something went wrong!" : ""}
+        </p>
         <form className="w-full h-full mt-4" onSubmit={formik.handleSubmit}>
           <div className="text-4xl text-primary flex mt-12 justify-center font-bold opacity-80 mb-8">
             Sign Up
@@ -117,8 +160,8 @@ const SignUp = () => {
               onChange={formik.handleChange}
               id=""
             >
-              <option>Student</option>
-              <option>Facilitator</option>
+              <option>student</option>
+              <option>facilitator</option>
             </select>
           </div>
           <div>
