@@ -13,12 +13,12 @@ const UserSchema = new Schema({
 // Request Collection
 const RequestSchema = new Schema({
   userId: { type: ObjectId, ref: "User", required: true },
-  category: {
+  role: {
     type: String,
-    enum: ["administrative", "academic"],
+    enum: ["facilitator", "admin"],
     required: true,
   },
-  content: { type: String, required: true },
+  message: { type: String, required: true },
   feedbacks: [{ type: ObjectId, ref: "Feedback" }],
   // other request-related fields
 });

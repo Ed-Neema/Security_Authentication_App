@@ -16,11 +16,7 @@ import {
   signUpStart,
   signUpSuccess,
 } from "../../redux/user/userSlice";
-// import {
-//   signUpStart,
-//   signUpSuccess,
-//   signUpFailure,
-// } from "../redux/user/userSlice";
+import toast, { Toaster } from "react-hot-toast";
 const SignUp = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const togglePasswordVisibility = () => {
@@ -73,22 +69,30 @@ const SignUp = () => {
           },
           body: JSON.stringify(values),
         });
+        // toast.promise(res, {
+        //   loading: "Loading",
+        //   success: "Signup successful. Please sign in",
+        //   error: "Error signing up",
+        // });
+        toast.success("Signup successful. Please sign in");
         console.log("inside try catch 2");
         const data = await res.json();
         console.log("Data returned: ", data);
         if (data.success === false) {
+          toast.error(data.message);
           dispatch(signUpFailure(data));
           return;
         }
         // dispatch(signUpSuccess(data));
         navigate("/auth/login");
       } catch (error) {
+        toast.error(error);
         dispatch(signUpFailure(error));
       }
       console.log("submit", values);
     },
   });
-// #Awesome10
+  // #Awesome10
   return (
     <AuthLayout>
       <div className="w-full ">
@@ -285,6 +289,7 @@ const SignUp = () => {
           </div>
         </form>
       </div>
+      <Toaster />
     </AuthLayout>
   );
 };

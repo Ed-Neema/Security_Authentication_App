@@ -9,7 +9,12 @@ import InputInfoComponent from "../../components/InputInfoComponent";
 import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "./AuthLayout";
 import { useDispatch, useSelector } from "react-redux";
-import { signInFailure, signInStart, signInSuccess } from "../../redux/user/userSlice";
+import {
+  signInFailure,
+  signInStart,
+  signInSuccess,
+} from "../../redux/user/userSlice";
+import toast, { Toaster } from "react-hot-toast";
 const Login = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const togglePasswordVisibility = () => {
@@ -31,7 +36,7 @@ const Login = () => {
     }),
     onSubmit: async (values) => {
       // console.log("submit", values);
-      console.log("Been clicked")
+      console.log("Been clicked");
       try {
         dispatch(signInStart());
         const res = await fetch("/api/auth/signin", {
@@ -42,10 +47,13 @@ const Login = () => {
           body: JSON.stringify(values),
         });
         const data = await res.json();
+        console.log(data)
         if (data.success === false) {
           dispatch(signInFailure(data));
+          toast.error(data.message);
           return;
         }
+        toast.success("Logged in successfully!");
         dispatch(signInSuccess(data));
         navigate(`/${data.role}/dashboard`);
       } catch (error) {
@@ -126,6 +134,7 @@ const Login = () => {
           </div>
         </form>
       </div>
+      <Toaster />
     </AuthLayout>
   );
 };

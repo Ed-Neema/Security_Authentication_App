@@ -39,7 +39,7 @@ export const signup = async (req, res) => {
   }
 };
 
-export const signin = async (req, res) => {
+export const signin = async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
     next(errorHandler(400, "All fields mandatory"));
@@ -48,8 +48,9 @@ export const signin = async (req, res) => {
   // chech if user exists in db
   const user = await User.findOne({ email });
   if (!user) {
-     next(errorHandler(400, "User not found"));
+     return next(errorHandler(400, "Invalid Login Credentials"));
   }
+  console.log(user)
   const { password: hashedPassword, ...rest } = user._doc;
   // compare passwords
   if (user && (await bcryptjs.compare(password, user.password))) {
@@ -80,4 +81,8 @@ export const signin = async (req, res) => {
   } else {
     next(errorHandler(401, "Email or Password invalid"));
   }
+};
+
+export const signout = (req, res) => {
+  res.clearCookie("access_token").status(200).json("Signout success!");
 };
