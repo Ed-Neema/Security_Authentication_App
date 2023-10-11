@@ -7,20 +7,14 @@ const FacilitatorDashboard = () => {
   const [tableData, setTableData] = useState([]);
   const tableHeaders = ["name", "role", "createdAt"];
   const fetchRequests = async () => {
-    console.log("111");
     try {
       const res = await fetch("/api/request/requests/facilitator");
-      console.log("222");
-      console.log(res);
+
       if (!res.ok) {
         console.log(`Request failed with status ${res.status}`);
       }
 
-      console.log("333");
-
       const data = await res.json();
-      console.log(data);
-      console.log("444");
 
       if (data.success === false) {
         if (data.message === "Token not valid") {
@@ -31,7 +25,7 @@ const FacilitatorDashboard = () => {
         }
         return;
       }
-      console.log("555");
+
       // Update the tableData state with the fetched data
       setTableData(data);
     } catch (error) {

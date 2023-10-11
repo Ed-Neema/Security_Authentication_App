@@ -11,11 +11,7 @@ import { AiOutlineCloseCircle } from "react-icons/ai";
 import { GoIssueClosed } from "react-icons/go";
 import PasswordStrengthChecker from "../../components/PasswordStrengthChecker";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  signUpFailure,
-  signUpStart,
-  signUpSuccess,
-} from "../../redux/user/userSlice";
+import { signUpFailure, signUpStart } from "../../redux/user/userSlice";
 import toast, { Toaster } from "react-hot-toast";
 const SignUp = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -24,7 +20,7 @@ const SignUp = () => {
   };
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.user);
+  const { error } = useSelector((state) => state.user);
 
   const formik = useFormik({
     initialValues: {
@@ -56,12 +52,10 @@ const SignUp = () => {
     onSubmit: async (values) => {
       // Convert the 'role' value to lowercase
       values.role = values.role.toLowerCase();
-      console.log(values);
-      console.log("before request");
+
       try {
-        console.log("inside try catch 1");
         dispatch(signUpStart());
-        console.log("inside try catch b");
+
         const res = await fetch("/api/auth/signup", {
           method: "POST",
           headers: {
@@ -69,15 +63,11 @@ const SignUp = () => {
           },
           body: JSON.stringify(values),
         });
-        // toast.promise(res, {
-        //   loading: "Loading",
-        //   success: "Signup successful. Please sign in",
-        //   error: "Error signing up",
-        // });
+
         toast.success("Signup successful. Please sign in");
-        console.log("inside try catch 2");
+
         const data = await res.json();
-        console.log("Data returned: ", data);
+
         if (data.success === false) {
           toast.error(data.message);
           dispatch(signUpFailure(data));
@@ -89,7 +79,6 @@ const SignUp = () => {
         toast.error(error);
         dispatch(signUpFailure(error));
       }
-      console.log("submit", values);
     },
   });
   // #Awesome10

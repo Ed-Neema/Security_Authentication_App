@@ -8,7 +8,7 @@ export const signup = async (req, res) => {
   const { name, email, password, role } = req.body;
   //   check if fields exist
   if (!name || !email || !password || !role) {
-    next(errorHandler(400, "All fields required"))
+    next(errorHandler(400, "All fields required"));
   }
 
   //check if email adddress already exists
@@ -18,11 +18,11 @@ export const signup = async (req, res) => {
   if (userAvailable) {
     next(errorHandler(400, "User already registered!"));
   }
-  console.log("After available");
+
   //   create new user if email address doesn't exist
 
   const hashedPassword = bcryptjs.hashSync(password, 10); //number of rounds for the salt
-  console.log("After hashed password")
+
   const newUser = await User.create({
     name,
     email,
@@ -30,7 +30,6 @@ export const signup = async (req, res) => {
     password: hashedPassword,
   });
 
-  console.log(`User created ${newUser}`);
   if (newUser) {
     // res.status(201).json({ _id: newUser.id, email: newUser.email });
     res.status(201).json({ message: "User created successfully" });
@@ -48,9 +47,9 @@ export const signin = async (req, res, next) => {
   // chech if user exists in db
   const user = await User.findOne({ email });
   if (!user) {
-     return next(errorHandler(400, "Invalid Login Credentials"));
+    return next(errorHandler(400, "Invalid Login Credentials"));
   }
-  console.log(user)
+
   const { password: hashedPassword, ...rest } = user._doc;
   // compare passwords
   if (user && (await bcryptjs.compare(password, user.password))) {

@@ -14,31 +14,25 @@ const StudentDashboard = () => {
   };
 
   const fetchRequests = async () => {
-    console.log("111");
     try {
-      const res = await fetch("/api/request/requests",);
-      console.log("222");
-      console.log(res)
+      const res = await fetch("/api/request/requests");
+
       if (!res.ok) {
         console.log(`Request failed with status ${res.status}`);
       }
 
-      console.log("333");
-
       const data = await res.json();
-      console.log(data);
-      console.log("444");
 
       if (data.success === false) {
-        if (data.message === "Token not valid"){
+        if (data.message === "Token not valid") {
           toast.error("Session Expired. Please log in");
           // navigate("/auth/login");
-        } else{
-          toast.error(data.message);          
+        } else {
+          toast.error(data.message);
         }
         return;
       }
-      console.log("555");
+
       // Update the tableData state with the fetched data
       setTableData(data);
     } catch (error) {

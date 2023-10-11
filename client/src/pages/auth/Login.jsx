@@ -35,8 +35,6 @@ const Login = () => {
       password: Yup.string().required("Password is required"),
     }),
     onSubmit: async (values) => {
-      // console.log("submit", values);
-      console.log("Been clicked");
       try {
         dispatch(signInStart());
         const res = await fetch("/api/auth/signin", {
@@ -47,7 +45,7 @@ const Login = () => {
           body: JSON.stringify(values),
         });
         const data = await res.json();
-        console.log(data)
+
         if (data.success === false) {
           dispatch(signInFailure(data));
           toast.error(data.message);

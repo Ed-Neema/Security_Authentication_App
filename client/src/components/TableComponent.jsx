@@ -5,7 +5,6 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
 const TableComponent = ({ tableHeaders, tableData, actions }) => {
-  console.log(tableData)
   return (
     <>
       <Table hoverable>

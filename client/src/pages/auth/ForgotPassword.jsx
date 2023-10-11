@@ -19,7 +19,7 @@ const ForgotPassword = () => {
       password: Yup.string().required("Password is required"),
     }),
     onSubmit: (values) => {
-      console.log("submit", values);
+      // console.log("submit", values);
     },
   });
 

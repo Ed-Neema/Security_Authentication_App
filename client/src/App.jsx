@@ -1,5 +1,4 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ForgotPassword from "./pages/auth/ForgotPassword";
 import SignUp from "./pages/auth/SignUp";
 import Login from "./pages/auth/Login";
 import StudentDashboard from "./pages/dashboards/StudentDashboard";
@@ -28,7 +27,6 @@ function App() {
           <Route element={<CreateRequest />} path="create/request" />
           <Route element={<RequestFullView />} path="request/:id" />
         </Route>
-        {/* <Route element={<ForgotPassword />} path="auth/forgotpassword" /> */}
       </Routes>
     </BrowserRouter>
   );

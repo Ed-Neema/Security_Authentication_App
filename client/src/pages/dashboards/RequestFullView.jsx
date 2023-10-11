@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useLocation, useNavigate } from "react-router";
-import Header from "../../components/Header";
+import { useLocation } from "react-router";
 import DashboardLayout from "./DashboardLayout";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -11,21 +10,20 @@ import { useSelector } from "react-redux";
 
 const RequestFullView = () => {
   const [requestData, setRequestData] = useState({ comments: [] });
-  const [commentsData, setCommentsData] = useState([]);
+
   const location = useLocation();
   const id = location.pathname.split("/")[2];
-  console.log(id);
+
   // fetch request with particular ID
   const fetchRequest = async () => {
     try {
       const res = await fetch(`/api/request/requests/${id}`);
-      console.log(res);
+
       if (!res.ok) {
         console.log(`Request failed with status ${res.status}`);
       }
 
       const data = await res.json();
-      console.log(data);
 
       if (data.success === false) {
         if (data.message === "Token not valid") {
@@ -36,7 +34,7 @@ const RequestFullView = () => {
         }
         return;
       }
-      console.log("555");
+
       // Update the tableData state with the fetched data
       setRequestData(data);
     } catch (error) {
@@ -46,56 +44,54 @@ const RequestFullView = () => {
   useEffect(() => {
     fetchRequest();
   }, [id]);
-  console.log(requestData.comments[0]);
-  console.log(requestData);
   const { currentUser } = useSelector((state) => state.user);
-   const formik = useFormik({
-     initialValues: {       
-       message: "",
-     },
-     //validate form
-     validationSchema: Yup.object({
-       message: Yup.string().required("Message is required"),
-     }),
-     onSubmit: async (values) => {
-        const message = values.message
-        const name = currentUser?.name;
-        const requestId = id;
-        const payload = {
-          message,
-          name,
-          requestId,
-        };
-        try {
-          // Make the POST request
-          const response = await fetch("/api/request/create-comment", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-          });
-          // Check if the request was successful
-          if (!response.ok) {
-            toast.error("Error sending response");
-            console.log(`Request failed with status ${response.status}`);
-          }
+  const formik = useFormik({
+    initialValues: {
+      message: "",
+    },
+    //validate form
+    validationSchema: Yup.object({
+      message: Yup.string().required("Message is required"),
+    }),
+    onSubmit: async (values) => {
+      const message = values.message;
+      const name = currentUser?.name;
+      const requestId = id;
+      const payload = {
+        message,
+        name,
+        requestId,
+      };
+      try {
+        // Make the POST request
+        const response = await fetch("/api/request/create-comment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+        // Check if the request was successful
+        if (!response.ok) {
+          toast.error("Error sending response");
+          console.log(`Request failed with status ${response.status}`);
+        }
 
-          // Assuming the response contains JSON data, you can handle it here if needed
-          const responseData = await response.json();
+        // Assuming the response contains JSON data, you can handle it here if needed
+        const responseData = await response.json();
 
-          // Optionally, you can dispatch any action or handle the response as needed
-          toast.success(responseData.message);
-          // Reload the page after a short delay (you can adjust the delay as needed)
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
-        } catch (error) {
-            console.log(error);
-            toast.error("Error sending response");
-        } 
-     }
-   });
+        // Optionally, you can dispatch any action or handle the response as needed
+        toast.success(responseData.message);
+        // Reload the page after a short delay (you can adjust the delay as needed)
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } catch (error) {
+        console.log(error);
+        toast.error("Error sending response");
+      }
+    },
+  });
   return (
     <div>
       <DashboardLayout>

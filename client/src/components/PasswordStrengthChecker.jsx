@@ -10,7 +10,7 @@ const PasswordStrengthChecker = ({ password }) => {
     //   "/.{8,}/",
     ];
 
-    regexPositive.forEach((regex, index) => {
+    regexPositive.forEach((regex) => {
       if (new RegExp(regex).test(password)) {
         score += 1;
       }
